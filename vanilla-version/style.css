@@ -166,6 +166,7 @@ button:hover {
   align-items: center;
   background-color: var(--gray);
   border-radius: 10px;
+  font-size: 2.4rem;
 }
 
 .square:hover {
