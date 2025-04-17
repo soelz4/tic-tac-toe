@@ -65,7 +65,6 @@ button:hover {
 }
 
 .turn {
-  color: var(--turquoise);
   grid-column-start: 1;
   grid-column-end: 3;
   align-self: center;

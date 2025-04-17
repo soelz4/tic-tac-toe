@@ -1,3 +1,4 @@
+import Store from "./store.js";
 import View from "./view.js";
 
 // const App = {
@@ -174,7 +175,21 @@ import View from "./view.js";
 
 function init() {
   const view = new View();
-  console.log(view.$.turn);
+  const store = new Store();
+
+  view.bindGameResetEvent((event) => {
+    console.log(event);
+  });
+
+  view.bindResetDataEvent((event) => {
+    console.log(event);
+  });
+
+  view.bindPlayerMoveEvent((event) => {
+    console.log(event);
+    view.setTurnIndicator(2);
+    view.handlePlayerMove(event.target, 1);
+  });
 }
 
 window.addEventListener("load", init);
