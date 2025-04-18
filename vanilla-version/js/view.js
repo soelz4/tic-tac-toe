@@ -27,6 +27,7 @@ export default class View {
   // Reset Game Button
   bindGameResetEvent(handler) {
     this.$.resetGameBtn.addEventListener("click", handler);
+    this.$.modalBtn.addEventListener("click", handler);
   }
 
   // Reset Data Button
@@ -37,7 +38,7 @@ export default class View {
   // Player Move - Click on Squares
   bindPlayerMoveEvent(handler) {
     this.$$.squares.forEach((square) => {
-      square.addEventListener("click", handler);
+      square.addEventListener("click", () => handler(square));
     });
   }
 
@@ -53,15 +54,30 @@ export default class View {
     icon.classList.toggle("fa-chevron-up");
   }
 
+  openModal(msg) {
+    this.$.modal.classList.remove("hidden");
+    this.$.modalText.textContent = msg;
+  }
+
+  closeModal() {
+    this.$.modal.classList.add("hidden");
+  }
+
+  clearMoves() {
+    this.$$.squares.forEach((square) => {
+      square.replaceChildren();
+    });
+  }
+
   // Handle Player Move
   handlePlayerMove(square, player) {
     const icon = document.createElement("i");
 
-    if (player === 1) {
-      icon.classList.add("fa-solid", "fa-x");
+    if (player.id === 1) {
+      icon.classList.add("fa-solid", player.iconClass);
       icon.style.color = "var(--turquoise)";
-    } else if (player === 2) {
-      icon.classList.add("fa-solid", "fa-o");
+    } else if (player.id === 2) {
+      icon.classList.add("fa-solid", player.iconClass);
       icon.style.color = "var(--yellow)";
     }
 
@@ -72,16 +88,17 @@ export default class View {
   setTurnIndicator(player) {
     const icon = document.createElement("i");
     const label = document.createElement("p");
-    icon.classList.add("fa-solid");
 
-    if (player === 1) {
-      this.$.turn.style.color = "var(--turquoise)";
-      icon.classList.add("fa-x");
-      label.textContent = "Player 1, You're Up";
-    } else if (player === 2) {
-      this.$.turn.style.color = "var(--yellow)";
-      icon.classList.add("fa-o");
-      label.textContent = "Player 2, You're Up";
+    if (player.id === 1) {
+      icon.classList.add("fa-solid", player.iconClass);
+      icon.style.color = "var(--turquoise)";
+      label.style.color = "var(--turquoise)";
+      label.textContent = `${player.name}, You're Up!`;
+    } else if (player.id === 2) {
+      icon.classList.add("fa-solid", player.iconClass);
+      icon.style.color = "var(--yellow)";
+      label.style.color = "var(--yellow)";
+      label.textContent = `${player.name}, You're Up!`;
     }
 
     this.$.turn.replaceChildren(icon, label);
