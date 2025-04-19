@@ -1,5 +1,9 @@
 const initialValue = {
   moves: [],
+  history: {
+    currentRoundGames: [],
+    allGames: [],
+  },
 };
 export default class Store {
   #state = initialValue;
@@ -34,7 +38,7 @@ export default class Store {
 
       for (const pattern of winningPatterns) {
         if (pattern.every((v) => selectedSquareIDs.includes(v))) {
-          winner = player.name;
+          winner = player;
         }
       }
     }
@@ -49,8 +53,50 @@ export default class Store {
     };
   }
 
+  get stats() {
+    const state = this.#getState();
+
+    return {
+      playerWithStats: this.players.map((player) => {
+        const wins = state.history.currentRoundGames.filter(
+          (game) => game.status.winner?.id === player.id,
+        ).length;
+
+        return {
+          ...player,
+          wins,
+        };
+      }),
+      ties: state.history.currentRoundGames.filter(
+        (game) => game.status.winner === null,
+      ).length,
+    };
+  }
+
   reset() {
-    this.#saveState(initialValue);
+    const state = this.#getState();
+    const stateClone = structuredClone(state);
+
+    const { status, moves } = this.game;
+
+    if (status.isCompleted) {
+      stateClone.history.currentRoundGames.push({
+        moves,
+        status,
+      });
+    }
+
+    stateClone.moves = [];
+
+    this.#saveState(stateClone);
+  }
+
+  resetData() {
+    const stateClone = structuredClone(this.#getState());
+    stateClone.history.allGames.push(...stateClone.history.currentRoundGames);
+    stateClone.history.currentRoundGames = [];
+
+    this.#saveState(stateClone);
   }
 
   playerMove(squareID) {
