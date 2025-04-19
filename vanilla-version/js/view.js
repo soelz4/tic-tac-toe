@@ -17,14 +17,18 @@ export default class View {
     this.$.modalBtn = this.#qs('[data-id="modal-btn"]');
     // Turn
     this.$.turn = this.#qs('[data-id="turn"]');
+    // Scores
+    this.$.p1Wins = this.#qs('[data-id="p1-wins"]');
+    this.$.p2Wins = this.#qs('[data-id="p2-wins"]');
+    this.$.ties = this.#qs('[data-id="ties"]');
 
     // UI-Only Event Listener
-    this.$.menu.addEventListener("click", () => {
+    this.$.menuBtn.addEventListener("click", () => {
       this.#toggleMenu();
     });
   }
 
-  // Reset Game Button
+  // Reset Game (Button - Modal)
   bindGameResetEvent(handler) {
     this.$.resetGameBtn.addEventListener("click", handler);
     this.$.modalBtn.addEventListener("click", handler);
@@ -54,15 +58,43 @@ export default class View {
     icon.classList.toggle("fa-chevron-up");
   }
 
+  // Close Menu
+  #closeMenu() {
+    this.$.menuItems.classList.add("hidden");
+    this.$.menuBtn.classList.remove("border");
+
+    // ICON
+    const icon = this.$.menuBtn.querySelector("i");
+
+    icon.classList.add("fa-chevron-down");
+    icon.classList.remove("fa-chevron-up");
+  }
+
+  // Update Scores
+  updateScores(p1Wins, p2Wins, ties) {
+    this.$.p1Wins.textContent = `${p1Wins} Wins`;
+    this.$.p2Wins.textContent = `${p2Wins} Wins`;
+    this.$.ties.textContent = `${ties}`;
+  }
+
+  // Open Modal
   openModal(msg) {
     this.$.modal.classList.remove("hidden");
     this.$.modalText.textContent = msg;
   }
 
-  closeModal() {
+  // Close Modal
+  #closeModal() {
     this.$.modal.classList.add("hidden");
   }
 
+  // Close All
+  closeAll() {
+    this.#closeModal();
+    this.#closeMenu();
+  }
+
+  // Clear Moves
   clearMoves() {
     this.$$.squares.forEach((square) => {
       square.replaceChildren();

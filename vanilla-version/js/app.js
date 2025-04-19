@@ -191,14 +191,30 @@ function init() {
   const store = new Store(players);
 
   view.bindGameResetEvent(() => {
-    view.closeModal();
+    view.closeAll();
     store.reset();
     view.clearMoves();
     view.setTurnIndicator(store.game.currentPlayer);
+    view.updateScores(
+      store.stats.playerWithStats[0].wins,
+      store.stats.playerWithStats[1].wins,
+      store.stats.ties,
+    );
+    console.log("New Game Started");
   });
 
-  view.bindResetDataEvent((event) => {
-    console.log(event);
+  view.bindResetDataEvent(() => {
+    store.resetData();
+    view.closeAll();
+    store.reset();
+    view.clearMoves();
+    view.setTurnIndicator(store.game.currentPlayer);
+    view.updateScores(
+      store.stats.playerWithStats[0].wins,
+      store.stats.playerWithStats[1].wins,
+      store.stats.ties,
+    );
+    console.log("Reset Data Button Clicked - All Data has been Deleted");
   });
 
   view.bindPlayerMoveEvent((square) => {
@@ -219,12 +235,14 @@ function init() {
     // Update State (Moves)
     store.playerMove(+square.id);
 
-    console.log(store.game.status.winner);
+    console.log("Game Status ~>", store.game.status);
 
     // Game Status
     if (store.game.status.isCompleted === true) {
       view.openModal(
-        store.game.status.winner ? `${store.game.status.winner} Wins!` : "TIE!",
+        store.game.status.winner
+          ? `${store.game.status.winner.name} Wins!`
+          : "TIE!",
       );
       return;
     }
