@@ -101,6 +101,17 @@ export default class View {
     });
   }
 
+  // Init Moves
+  initMoves(moves) {
+    this.$$.squares.forEach((square) => {
+      const existingMove = moves.find((move) => move.squareID === +square.id);
+
+      if (existingMove) {
+        this.handlePlayerMove(square, existingMove.player);
+      }
+    });
+  }
+
   // Handle Player Move
   handlePlayerMove(square, player) {
     const icon = document.createElement("i");
