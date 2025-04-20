@@ -188,11 +188,10 @@ const players = [
 
 function init() {
   const view = new View();
-  const store = new Store(players);
+  const store = new Store("live-t3-storage-key", players);
 
-  view.bindGameResetEvent(() => {
+  function initView() {
     view.closeAll();
-    store.reset();
     view.clearMoves();
     view.setTurnIndicator(store.game.currentPlayer);
     view.updateScores(
@@ -200,20 +199,21 @@ function init() {
       store.stats.playerWithStats[1].wins,
       store.stats.ties,
     );
+    view.initMoves(store.game.moves);
+  }
+
+  initView();
+
+  view.bindGameResetEvent(() => {
+    store.reset();
+    initView();
     console.log("New Game Started");
   });
 
   view.bindResetDataEvent(() => {
     store.resetData();
-    view.closeAll();
     store.reset();
-    view.clearMoves();
-    view.setTurnIndicator(store.game.currentPlayer);
-    view.updateScores(
-      store.stats.playerWithStats[0].wins,
-      store.stats.playerWithStats[1].wins,
-      store.stats.ties,
-    );
+    initView();
     console.log("Reset Data Button Clicked - All Data has been Deleted");
   });
 
